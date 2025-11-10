@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class EnderEyeMixin {
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     public void injectUse(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        if (!MegaModConfig.getConfig().FeatureToggling.EnderEyesEnabled) {
+        if (!MegaModConfig.enderEyesEnabled.get()) {
             cir.setReturnValue(ActionResult.PASS);
             cir.cancel();
             return;
@@ -24,7 +24,7 @@ public class EnderEyeMixin {
     }
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
     public void injectUseOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-        if (!MegaModConfig.getConfig().FeatureToggling.EnderEyesEnabled) {
+        if (!MegaModConfig.enderEyesEnabled.get()) {
             cir.setReturnValue(ActionResult.PASS);
             cir.cancel();
             return;

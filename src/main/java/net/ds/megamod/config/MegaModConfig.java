@@ -1,65 +1,39 @@
 package net.ds.megamod.config;
 
 import com.google.gson.JsonObject;
+import com.supermartijn642.configlib.api.ConfigBuilders;
+import com.supermartijn642.configlib.api.IConfigBuilder;
 import net.ds.megamod.MegaMod;
-import ru.nern.fconfiglib.v1.ConfigManager;
-import ru.nern.fconfiglib.v1.api.annotations.restrictions.InRangeFloat;
-import ru.nern.fconfiglib.v1.api.annotations.restrictions.InRangeInt;
-import ru.nern.fconfiglib.v1.json.JsonConfigManager;
-import ru.nern.fconfiglib.v1.log.Sl4jLoggerWrapper;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 
 public class MegaModConfig {
-    public static final int CONFIG_VERSION = 4;
+    public static final int CONFIG_VERSION = 1;
 
-    public static ConfigManager<Config, JsonObject> manager = JsonConfigManager
-            .builderOf(Config.class)
-            .modId(MegaMod.MOD_ID)
-            .version(CONFIG_VERSION)
-            .logger(Sl4jLoggerWrapper.createFrom(MegaMod.LOGGER))
-            .create();
+    public static final Supplier<Boolean> netherEnabled;
+    public static final Supplier<Boolean> endEnabled;
+    public static final Supplier<Boolean> enderEyesEnabled;
+    public static final Supplier<Boolean> villagerDeathMessages;
 
-    public static void init() {
-        manager.init();
+    static {
+        IConfigBuilder builder = ConfigBuilders.newTomlConfig("mega_mod", "mega_mod_config", true);
+
+        builder.push("Feature Toggles").categoryComment("Vanilla features that can be turned off");
+        netherEnabled = builder.comment("Whether or not nether portals can be entered !! CURRENTLY DISABLED DUE TO GAMERULE !!").define("netherEnabled", true);
+        endEnabled = builder.comment("Whether or not end portals can be entered").define("endEnabled", true);
+        enderEyesEnabled = builder.comment("Whether or not a player can throw/place Eyes of Ender").define("enderEyesEnabled", true);
+        builder.pop();
+
+        builder.push("Mega Mod Features").categoryComment("Megamod added Features");
+        villagerDeathMessages = builder.comment("Weather a message is sent when a villager dies").define("villagerDeathMessages", false);
+        builder.pop();
     }
 
-    public static Config getConfig() {
-        return manager.config();
-    }
+    public static void reload() {
+        MegaMod.LOGGER.info("Reloading MegaMod Config");
 
-    public static class Config {
-        public boolean VillagerDeathMessages = true;
 
-        public CombatConfig Combat = new CombatConfig();
-        public FeatureToggle FeatureToggling = new FeatureToggle();
-        public Trolls Trolls = new Trolls();
-
-        public static class CombatConfig {
-            @InRangeInt(min = 1, max = 1000)
-            public int CombatDuration = 20;
-            public List<String> CombatTriggerEntities = List.of("player");
-
-            public CombatDisabledFeatures DisabledWhenInCombat = new CombatDisabledFeatures();
-        }
-        public static class CombatDisabledFeatures {
-            public boolean ElytraRockets = false;
-        }
-        public static class FeatureToggle {
-            public boolean NetherEnabled = true;
-            public boolean EndEnabled = true;
-            public boolean EnderEyesEnabled = true;
-            public boolean ElytraRocketsEnabled = true;
-        }
-        public static class Trolls {
-            public boolean TrollCommandEnabled = false;
-            public int MaxEndermanSearchRadius = 75;
-            public int EndermanToSpawn = 0;
-            public int BabyZombiesToSpawn = 2;
-            public int BabyZombieTotemCount = 0;
-//            public String _c2 = "Give command syntax (minecraft:stick[enchantments:{levels:{knockback:255}}])";
-//            public String BabyZombieWeapon = "";
-        }
     }
 }

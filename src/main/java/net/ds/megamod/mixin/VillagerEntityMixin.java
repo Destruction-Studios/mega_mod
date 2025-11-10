@@ -20,10 +20,10 @@ public abstract class VillagerEntityMixin {
 
     @Inject(method = "onDeath", at = @At("HEAD"))
     private void injectVillagerOnDeath(DamageSource damageSource, CallbackInfo ci) {
-        if (!MegaModConfig.getConfig().VillagerDeathMessages) {
+        if (!MegaModConfig.villagerDeathMessages.get()) {
             return;
         }
-        String profession = this.getVillagerData().getProfession().toString();
+        String profession = this.getVillagerData().profession().getIdAsString();
 //        if (!Objects.equals(profession, "none")) {
             String output = damageSource.getDeathMessage((LivingEntity) (Object) this).getString();
             MegaMod.getServer().getPlayerManager().broadcast(Text.of(output), false);

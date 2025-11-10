@@ -32,6 +32,7 @@ repositories {
 		name "JitPack"
 		url "https://jitpack.io"
 	}
+	maven { url "https://www.cursemaven.com" }
 }
 
 dependencies {
@@ -47,7 +48,8 @@ dependencies {
 	include "org.quiltmc.parsers:json:0.2.1"
 //
 //	//Config lib
-	modImplementation "com.github.ForwarD-NerN:fconfiglib:${project.config_lib_version}"
+	include "curse.maven:supermartijn642s-config-lib-438332:${config_file_version}"
+//	modImplementation "com.github.ForwarD-NerN:fconfiglib:${project.config_lib_version}"
 }
 
 processResources {
